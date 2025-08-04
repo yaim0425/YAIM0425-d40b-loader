@@ -1,0 +1,12 @@
+{
+  "name": "zzzYAIM0425-4000-loader",
+  "version": "0.0.1",
+  "title": "zzzYAIM0425 4000 Loader",
+  "author": "YAIM904",
+  "factorio_version": "2.0",
+  "description": "Creates an entity that facilitates the input and output of materials in factories, chests and other entities. [[I accept suggestions]]",
+  "dependencies": [
+    "base",
+    "zzzYAIM0425-0000-lib"
+  ]
+}
