@@ -10,6 +10,8 @@ local This_MOD = {}
 
 --- Iniciar el modulo
 function This_MOD.start()
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     --- Valores de la referencia
     This_MOD.setSetting()
 
@@ -26,6 +28,8 @@ function This_MOD.start()
         This_MOD.CreateItem(Tier)
         This_MOD.CreateEntity(Tier)
     end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 --- Valores de la referencia
