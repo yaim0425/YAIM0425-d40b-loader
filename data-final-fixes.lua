@@ -15,19 +15,19 @@ function This_MOD.start()
     --- Valores de la referencia
     This_MOD.setSetting()
 
-    --- Entidades a afectar
-    This_MOD.BuildTiers()
+    -- --- Entidades a afectar
+    -- This_MOD.BuildTiers()
 
-    --- Crear el subgrupo para los cargadores
-    local subgroup = GPrefix.items[This_MOD.oldSubgroup].subgroup
-    GPrefix.duplicate_subgroup(subgroup, This_MOD.newSubgroup)
+    -- --- Crear el subgrupo para los cargadores
+    -- local subgroup = GPrefix.items[This_MOD.oldSubgroup].subgroup
+    -- GPrefix.duplicate_subgroup(subgroup, This_MOD.newSubgroup)
 
-    --- Crear las todo
-    for _, Tier in pairs(This_MOD.Tiers) do
-        This_MOD.CreateRecipe(Tier)
-        This_MOD.CreateItem(Tier)
-        This_MOD.CreateEntity(Tier)
-    end
+    -- --- Crear las todo
+    -- for _, Tier in pairs(This_MOD.Tiers) do
+    --     This_MOD.CreateRecipe(Tier)
+    --     This_MOD.CreateItem(Tier)
+    --     This_MOD.CreateEntity(Tier)
+    -- end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
