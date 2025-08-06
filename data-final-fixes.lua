@@ -13,7 +13,7 @@ function This_MOD.start()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Valores de la referencia
-    This_MOD.setSetting()
+    This_MOD.setting_mod()
 
     -- --- Entidades a afectar
     -- This_MOD.BuildTiers()
@@ -33,7 +33,7 @@ function This_MOD.start()
 end
 
 --- Valores de la referencia
-function This_MOD.setSetting()
+function This_MOD.setting_mod()
     --- Otros valores
     This_MOD.Prefix      = "zzzYAIM0425-5000-"
     This_MOD.name        = "loader"
