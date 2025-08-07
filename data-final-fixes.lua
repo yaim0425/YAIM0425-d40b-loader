@@ -44,18 +44,16 @@ function This_MOD.setting_mod()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Variables a usar
-    local Graphics = "__" .. This_MOD.prefix .. This_MOD.name .. "__/graphics/"
-    local Old_subgroup = GPrefix.items["splitter"].subgroup
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
     --- Crear el subgroup
-    GPrefix.duplicate_subgroup(Old_subgroup, This_MOD.ref.subgroup)
+    GPrefix.duplicate_subgroup(
+        GPrefix.items["splitter"].subgroup,
+        This_MOD.ref.subgroup
+    )
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Inicializar la variable
+    local Graphics = "__" .. This_MOD.prefix .. This_MOD.name .. "__/graphics/"
     This_MOD.graphics = {
         icon = {
             base = Graphics .. "icon-base.png",
