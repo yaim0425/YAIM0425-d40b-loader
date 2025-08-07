@@ -28,7 +28,7 @@ function This_MOD.start()
     --- Crear las todo
     for _, Space in pairs(This_MOD.info) do
         This_MOD.create_recipe(Space)
-        -- This_MOD.CreateItem(Space)
+        This_MOD.create_item(Space)
         -- This_MOD.CreateEntity(Space)
     end
 
@@ -208,33 +208,33 @@ function This_MOD.create_recipe(space)
 end
 
 --- Crear el objeto
-function This_MOD.CreateItem(tier)
+function This_MOD.create_item(tier)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     ---> Cópiar los valores del objeto de referencia
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    local item                  = GPrefix.duplicate_item(tier.item)
+    local Item = GPrefix.duplicate_item(tier.item)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     ---> Sobre escribir los valores variables
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Sobre escribir los valores constantes
-    item.subgroup               = This_MOD.newSubgroup
+    Item.subgroup = This_MOD.newSubgroup
 
     --- Nombre, apodo y descripción
-    item.name                   = This_MOD.prefix .. GPrefix.delete_prefix(tier.item.name)
-    local toFind                = string.gsub(This_MOD.ref.under, "%-", "%%-")
-    item.name                   = string.gsub(item.name, toFind, This_MOD.name)
+    Item.name = This_MOD.prefix .. GPrefix.delete_prefix(tier.item.name)
+    Item.name = string.gsub(Item.name, This_MOD.ref.to_find, This_MOD.name)
 
-    local localised_name        = { "entity-name." .. This_MOD.prefix .. tier.name .. This_MOD.name }
-    item.localised_name         = { "", localised_name }
+    local localised_name = { "entity-name." .. This_MOD.prefix .. tier.name .. This_MOD.name }
+    Item.localised_name = { "", localised_name }
 
     local localised_description = { "entity-description." .. This_MOD.prefix .. This_MOD.name }
-    item.localised_description  = { "", localised_description }
+    Item.localised_description = { "", localised_description }
 
-    item.place_result           = item.name
-    item.icons                  = {
+    Item.place_result = Item.name
+
+    Item.icons = {
         { icon = This_MOD.graphics.icon.base },
         { icon = This_MOD.graphics.icon.mask, tint = tier.color },
     }
@@ -244,7 +244,9 @@ function This_MOD.CreateItem(tier)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Crear el prototipo
-    GPrefix.addDataRaw({ item })
+    GPrefix.extend(Item)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 --- Crear la entidad a usa
