@@ -63,15 +63,15 @@ function This_MOD.setting_mod()
             base = Graphics .. "icon-base.png",
             mask = Graphics .. "icon-mask.png"
         },
-        entity = {
-            back = Graphics .. "entity-back.png",
-            base = Graphics .. "entity-base.png",
-            mask = Graphics .. "entity-mask.png",
-            shadow = Graphics .. "entity-shadow.png"
-        },
         tech = {
             base = Graphics .. "tech-base.png",
             mask = Graphics .. "tech-mask.png"
+        },
+        entity = {
+            base = Graphics .. "entity-base.png",
+            mask = Graphics .. "entity-mask.png",
+            back = Graphics .. "entity-back.png",
+            shadow = Graphics .. "entity-shadow.png"
         }
     }
 
