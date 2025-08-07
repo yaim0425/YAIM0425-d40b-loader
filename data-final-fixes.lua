@@ -12,15 +12,18 @@ local This_MOD = {}
 function This_MOD.start()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
+    --- Obtener información desde el nombre de MOD
+    GPrefix.split_name_folder(This_MOD)
+
     --- Valores de la referencia
     This_MOD.setting_mod()
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     -- --- Entidades a afectar
     -- This_MOD.BuildTiers()
 
-    -- --- Crear el subgrupo para los cargadores
-    -- local subgroup = GPrefix.items[This_MOD.oldSubgroup].subgroup
-    -- GPrefix.duplicate_subgroup(subgroup, This_MOD.newSubgroup)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     -- --- Crear las todo
     -- for _, Tier in pairs(This_MOD.Tiers) do
