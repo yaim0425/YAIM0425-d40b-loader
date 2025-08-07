@@ -20,8 +20,8 @@ function This_MOD.start()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    -- --- Entidades a afectar
-    -- This_MOD.BuildTiers()
+    --- Entidades a afectar
+    This_MOD.build_tiers()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -44,6 +44,7 @@ function This_MOD.setting_mod()
     This_MOD.ref.under = "underground-belt"
     This_MOD.ref.loader = data.raw["loader-1x1"]["loader-1x1"]
     This_MOD.ref.subgroup = This_MOD.prefix .. This_MOD.name
+    This_MOD.ref.to_find = string.gsub(This_MOD.ref.under, "%-", "%%-")
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -98,61 +99,49 @@ end
 ---------------------------------------------------------------------------------------------------
 
 --- Entidades a afectar
-function This_MOD.BuildTiers()
-    local toFind = string.gsub(This_MOD.ref.under, "%-", "%%-")
+function This_MOD.build_tiers()
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Recorrer las entidades
     for _, Entity in pairs(data.raw[This_MOD.ref.under]) do
-        --- Validación
-        if Entity.hidden then goto JumpEntity end
-        if not Entity.minable then goto JumpEntity end
-        if not Entity.minable.results then goto JumpEntity end
+        repeat
+            --- Validación
+            if Entity.hidden then break end
 
-        --- Eliminar los indicadores
-        local tier = GPrefix.delete_prefix(Entity.name)
-        tier = string.gsub(tier, "^[0-9%-]+", "")
-        tier = string.gsub(tier, toFind, "")
-        if not This_MOD.tiers[tier] then goto JumpEntity end
+            --- Identificar el objeto
+            local Item = GPrefix.get_item_create_entity(Entity)
+            if not Item then break end
+            if not GPrefix.recipes[Item.name] then break end
 
-        --- Crear el espacio para la entidad
-        local Space          = This_MOD.tiers[tier] or {}
-        This_MOD.tiers[tier] = Space
+            --- Identificar el tier
+            local Tier = GPrefix.delete_prefix(Entity.name)
+            Tier = string.gsub(Tier, "^[0-9%-]+", "")
+            Tier = string.gsub(Tier, This_MOD.ref.to_find, "")
+            if not This_MOD.tiers[Tier] then break end
 
-        --- Guardar la información
-        if Entity.minable and Entity.minable.results then
-            for _, result in pairs(Entity.minable.results) do
-                local item = GPrefix.items[result.name]
-                if item and item.place_result then
-                    if item.place_result == Entity.name then
-                        Space.item = item
-                        break
-                    end
-                end
-            end
-        end
+            --- Crear el espacio para la información
+            local Space = This_MOD.tiers[Tier] or {}
+            This_MOD.tiers[Tier] = Space
 
-        if not Space.item or not GPrefix.recipes[Space.item.name] then
-            goto JumpEntity
-        end
-
-        Space.name       = tier
-        Space.entity     = Entity
-        Space.recipe     = GPrefix.recipes[Space.item.name][1]
-        Space.technology = GPrefix.getTechnology(Space.recipe.name)
-
-        if not Space.technology then
-            local Default    = GPrefix.get_recipe_of_ingredient(Space.recipe)
-            Space.technology = GPrefix.getTechnology(Default, true)
-        end
-
-        --- Receptor del salto
-        :: JumpEntity ::
+            --- Guardar la información
+            Space.item = Item
+            Space.name = Tier
+            Space.entity = Entity
+            Space.recipe = GPrefix.recipes[Space.item.name][1]
+            Space.technology = GPrefix.get_technology(Space.recipe.name)
+        until true
     end
 
-    --- Niveles sin  entidades
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Niveles sin entidades
     for key, Tier in pairs(This_MOD.tiers) do
         if not Tier.name then
             This_MOD.tiers[key] = nil
         end
     end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 --- Crear las recetas
