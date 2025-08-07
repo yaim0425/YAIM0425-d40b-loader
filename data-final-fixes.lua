@@ -44,22 +44,6 @@ function This_MOD.setting_mod()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Contenedor de datos
-    This_MOD.tiers = {
-        [""]             = { color = { r = 210, g = 180, b = 080 } },
-        ["fast-"]        = { color = { r = 210, g = 060, b = 060 } },
-        ["express-"]     = { color = { r = 080, g = 180, b = 210 } },
-        ["turbo-"]       = { color = { r = 160, g = 190, b = 080 } },
-
-        ["basic-"]       = { color = { r = 185, g = 185, b = 185 } },
-        ["supersonic-"]  = { color = { r = 213, g = 041, b = 209 } },
-
-        ["kr-advanced-"] = { color = { r = 160, g = 190, b = 080 } },
-        ["kr-superior-"] = { color = { r = 213, g = 041, b = 209 } },
-    }
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
     --- Variables a usar
     local Graphics = "__" .. This_MOD.prefix .. This_MOD.name .. "__/graphics/"
     local Old_subgroup = GPrefix.items["splitter"].subgroup
@@ -83,6 +67,22 @@ function This_MOD.setting_mod()
             mask = Graphics .. "entity-mask.png",
             shadow = Graphics .. "entity-shadow.png"
         }
+    }
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Contenedor de datos
+    This_MOD.tiers = {
+        [""]             = { color = { r = 210, g = 180, b = 080 } },
+        ["fast-"]        = { color = { r = 210, g = 060, b = 060 } },
+        ["express-"]     = { color = { r = 080, g = 180, b = 210 } },
+        ["turbo-"]       = { color = { r = 160, g = 190, b = 080 } },
+
+        ["basic-"]       = { color = { r = 185, g = 185, b = 185 } },
+        ["supersonic-"]  = { color = { r = 213, g = 041, b = 209 } },
+
+        ["kr-advanced-"] = { color = { r = 160, g = 190, b = 080 } },
+        ["kr-superior-"] = { color = { r = 213, g = 041, b = 209 } },
     }
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
