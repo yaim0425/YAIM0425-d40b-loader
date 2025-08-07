@@ -25,12 +25,12 @@ function This_MOD.start()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    -- --- Crear las todo
-    -- for _, Tier in pairs(This_MOD.Tiers) do
-    --     This_MOD.CreateRecipe(Tier)
-    --     This_MOD.CreateItem(Tier)
-    --     This_MOD.CreateEntity(Tier)
-    -- end
+    --- Crear las todo
+    for _, Space in pairs(This_MOD.info) do
+        This_MOD.create_recipe(Space)
+        -- This_MOD.CreateItem(Space)
+        -- This_MOD.CreateEntity(Space)
+    end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -74,7 +74,7 @@ function This_MOD.setting_mod()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Contenedor de datos
-    This_MOD.tiers = {
+    This_MOD.info = {
         [""]             = { color = { r = 210, g = 180, b = 080 } },
         ["fast-"]        = { color = { r = 210, g = 060, b = 060 } },
         ["express-"]     = { color = { r = 080, g = 180, b = 210 } },
@@ -117,92 +117,94 @@ function This_MOD.build_tiers()
             local Name = GPrefix.delete_prefix(Entity.name)
             Name = string.gsub(Name, "^[0-9%-]+", "")
             Name = string.gsub(Name, This_MOD.ref.to_find, "")
-            if not This_MOD.tiers[Name] then break end
+            if not This_MOD.info[Name] then break end
 
             --- Crear el espacio para la información
-            local Tier = This_MOD.tiers[Name] or {}
-            This_MOD.tiers[Name] = Tier
+            local Space = This_MOD.info[Name] or {}
+            This_MOD.info[Name] = Space
 
             --- Guardar la información
-            Tier.item = Item
-            Tier.name = Name
-            Tier.entity = Entity
-            Tier.recipe = GPrefix.recipes[Tier.item.name][1]
-            Tier.technology = GPrefix.get_technology(Tier.recipe.name)
+            Space.item = Item
+            Space.name = Name
+            Space.entity = Entity
+            Space.recipe = GPrefix.recipes[Space.item.name][1]
+            Space.tech = GPrefix.get_technology(Space.recipe.name)
         until true
     end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Niveles sin entidades
-    for key, Tier in pairs(This_MOD.tiers) do
+    for key, Tier in pairs(This_MOD.info) do
         if not Tier.name then
-            This_MOD.tiers[key] = nil
+            This_MOD.info[key] = nil
         end
     end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
+---------------------------------------------------------------------------------------------------
+
 --- Crear las recetas
-function This_MOD.CreateRecipe(tier)
+function This_MOD.create_recipe(space)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     ---> Cópiar los valores de la receta de referencia
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    local recipe                 = util.copy(tier.recipe)
+    local Recipe = util.copy(space.recipe)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     ---> Sobre escribir los valores variables
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Sobre escribir los valores constantes
-    recipe.subgroup              = This_MOD.newSubgroup
+    Recipe.subgroup = This_MOD.ref.subgroup
 
     --- Nombre, apodo y descripción
-    local toFind                 = string.gsub(This_MOD.ref.under, "%-", "%%-")
-    recipe.name                  = This_MOD.prefix .. GPrefix.delete_prefix(tier.item.name)
-    recipe.name                  = string.gsub(recipe.name, toFind, This_MOD.name)
+    Recipe.name = This_MOD.prefix .. GPrefix.delete_prefix(space.item.name)
+    Recipe.name = string.gsub(Recipe.name, This_MOD.ref.to_find, This_MOD.name)
 
-    local localised_name         = { "entity-name." .. This_MOD.prefix .. tier.name .. This_MOD.name }
-    recipe.localised_name        = { "", localised_name }
+    local localised_name = { "entity-name." .. This_MOD.prefix .. space.name .. This_MOD.name }
+    Recipe.localised_name = { "", localised_name }
 
-    local localised_description  = { "entity-description." .. This_MOD.prefix .. This_MOD.name }
-    recipe.localised_description = { "", localised_description }
+    local localised_description = { "entity-description." .. This_MOD.prefix .. This_MOD.name }
+    Recipe.localised_description = { "", localised_description }
 
     --- Remplazar el resultado principal
-    local result                 = GPrefix.get_table(recipe.results, "name", tier.item.name)
-    result.name                  = recipe.name
+    local result = GPrefix.get_table(Recipe.results, "name", space.item.name)
+    result.name = Recipe.name
 
     --- Remplazar los ingredientes
-    toFind                       = string.gsub(This_MOD.ref.under, "%-", "%%-")
-    for _, ingredient in pairs(recipe.ingredients) do
-        if string.find(ingredient.name, toFind) then
+    for _, ingredient in pairs(Recipe.ingredients) do
+        if string.find(ingredient.name, This_MOD.ref.to_find) then
             local name = GPrefix.delete_prefix(ingredient.name)
             name = string.gsub(name, "^[0-9%-]+", "")
-            name = string.gsub(name, toFind, "")
-            if This_MOD.tiers[name] then
-                ingredient.name = string.gsub(ingredient.name, toFind, This_MOD.name)
+            name = string.gsub(name, This_MOD.ref.to_find, "")
+            if This_MOD.info[name] then
+                ingredient.name = string.gsub(ingredient.name, This_MOD.ref.to_find, This_MOD.name)
                 ingredient.name = This_MOD.prefix .. GPrefix.delete_prefix(ingredient.name)
             end
         end
     end
 
     --- Imagen de la receta
-    recipe.icons = {
+    Recipe.icons = {
         { icon = This_MOD.graphics.icon.base },
-        { icon = This_MOD.graphics.icon.mask, tint = tier.color },
+        { icon = This_MOD.graphics.icon.mask, tint = space.color },
     }
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     ---> Crear el prototipo
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Crear el prototipo
-    GPrefix.addDataRaw({ recipe })
+    --- Crear la receta
+    GPrefix.extend(Recipe)
 
     --- Agregar a la tecnología
-    GPrefix.addRecipeToTechnology(nil, tier.recipe.name, recipe)
+    GPrefix.create_tech(This_MOD.prefix, space.tech, Recipe)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 --- Crear el objeto
@@ -374,7 +376,7 @@ function This_MOD.CreateEntity(tier)
         local name = GPrefix.delete_prefix(entity.next_upgrade)
         name = string.gsub(name, "^[0-9%-]+", "")
         name = string.gsub(name, toFind, "")
-        if This_MOD.tiers[name] then
+        if This_MOD.info[name] then
             local next_upgrade  = GPrefix.delete_prefix(entity.next_upgrade)
             next_upgrade        = string.gsub(next_upgrade, toFind, This_MOD.name)
             entity.next_upgrade = This_MOD.prefix .. next_upgrade
