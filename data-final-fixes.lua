@@ -68,6 +68,10 @@ function This_MOD.setting_mod()
             base = Graphics .. "entity-base.png",
             mask = Graphics .. "entity-mask.png",
             shadow = Graphics .. "entity-shadow.png"
+        },
+        tech = {
+            base = Graphics .. "tech-base.png",
+            mask = Graphics .. "tech-mask.png"
         }
     }
 
@@ -202,7 +206,11 @@ function This_MOD.create_recipe(space)
     GPrefix.extend(Recipe)
 
     --- Agregar a la tecnología
-    GPrefix.create_tech(This_MOD.prefix, space.tech, Recipe)
+    local Tech = GPrefix.create_tech(This_MOD.prefix, space.tech, Recipe)
+    Tech.icons = {
+        { icon = This_MOD.graphics.tech.base, icon_size = 128 },
+        { icon = This_MOD.graphics.tech.mask, tint = space.color, icon_size = 128 },
+    }
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
