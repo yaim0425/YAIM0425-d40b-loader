@@ -44,12 +44,6 @@ function This_MOD.setting_mod()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Crear el subgroup
-    local Old_subgroup = GPrefix.items["splitter"].subgroup
-    GPrefix.duplicate_subgroup(Old_subgroup, This_MOD.ref.subgroup)
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
     --- Contenedor de datos
     This_MOD.tiers = {
         [""]             = { color = { r = 210, g = 180, b = 080 } },
@@ -64,8 +58,18 @@ function This_MOD.setting_mod()
         ["kr-superior-"] = { color = { r = 213, g = 041, b = 209 } },
     }
 
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     --- Variables a usar
     local Graphics = "__" .. This_MOD.prefix .. This_MOD.name .. "__/graphics/"
+    local Old_subgroup = GPrefix.items["splitter"].subgroup
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Crear el subgroup
+    GPrefix.duplicate_subgroup(Old_subgroup, This_MOD.ref.subgroup)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Inicializar la variable
     This_MOD.graphics = {
