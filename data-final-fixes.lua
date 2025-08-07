@@ -216,12 +216,12 @@ function This_MOD.create_recipe(space)
 end
 
 --- Crear el objeto
-function This_MOD.create_item(tier)
+function This_MOD.create_item(space)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     ---> Cópiar los valores del objeto de referencia
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    local Item = GPrefix.duplicate_item(tier.item)
+    local Item = GPrefix.duplicate_item(space.item)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     ---> Sobre escribir los valores variables
@@ -231,10 +231,10 @@ function This_MOD.create_item(tier)
     Item.subgroup = This_MOD.ref.subgroup
 
     --- Nombre, apodo y descripción
-    Item.name = This_MOD.prefix .. GPrefix.delete_prefix(tier.item.name)
+    Item.name = This_MOD.prefix .. GPrefix.delete_prefix(space.item.name)
     Item.name = string.gsub(Item.name, This_MOD.ref.to_find, This_MOD.name)
 
-    local localised_name = { "entity-name." .. This_MOD.prefix .. tier.name .. This_MOD.name }
+    local localised_name = { "entity-name." .. This_MOD.prefix .. space.name .. This_MOD.name }
     Item.localised_name = { "", localised_name }
 
     local localised_description = { "entity-description." .. This_MOD.prefix .. This_MOD.name }
@@ -244,7 +244,7 @@ function This_MOD.create_item(tier)
 
     Item.icons = {
         { icon = This_MOD.graphics.icon.base },
-        { icon = This_MOD.graphics.icon.mask, tint = tier.color },
+        { icon = This_MOD.graphics.icon.mask, tint = space.color },
     }
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -258,12 +258,12 @@ function This_MOD.create_item(tier)
 end
 
 --- Crear la entidad a usa
-function This_MOD.create_entity(tier)
+function This_MOD.create_entity(space)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     ---> Cópiar los valores de la entidad de referencia
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    local Entity = util.copy(tier.entity)
+    local Entity = util.copy(space.entity)
     Entity.hidden = nil
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -316,7 +316,7 @@ function This_MOD.create_entity(tier)
                     height = 96,
                     width = 96,
                     scale = 0.5,
-                    tint = tier.color
+                    tint = space.color
                 }
             }
         },
@@ -347,7 +347,7 @@ function This_MOD.create_entity(tier)
                     height = 96,
                     width = 96,
                     scale = 0.5,
-                    tint = tier.color,
+                    tint = space.color,
                     y = 96
                 }
             }
@@ -356,17 +356,17 @@ function This_MOD.create_entity(tier)
 
     Entity.icons = {
         { icon = This_MOD.graphics.icon.base },
-        { icon = This_MOD.graphics.icon.mask, tint = tier.color },
+        { icon = This_MOD.graphics.icon.mask, tint = space.color },
     }
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     ---> Sobre escribir los valores variables
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    Entity.name = This_MOD.prefix .. GPrefix.delete_prefix(tier.entity.name)
+    Entity.name = This_MOD.prefix .. GPrefix.delete_prefix(space.entity.name)
     Entity.name = string.gsub(Entity.name, This_MOD.ref.to_find, This_MOD.name)
 
-    local localised_name = { "entity-name." .. This_MOD.prefix .. tier.name .. This_MOD.name }
+    local localised_name = { "entity-name." .. This_MOD.prefix .. space.name .. This_MOD.name }
     Entity.localised_name = { "", localised_name }
 
     local localised_description = { "entity-description." .. This_MOD.prefix .. This_MOD.name }
@@ -398,7 +398,7 @@ function This_MOD.create_entity(tier)
 
     Entity.icons = {
         { icon = This_MOD.graphics.icon.base },
-        { icon = This_MOD.graphics.icon.mask, tint = tier.color },
+        { icon = This_MOD.graphics.icon.mask, tint = space.color },
     }
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
