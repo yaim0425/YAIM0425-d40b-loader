@@ -34,19 +34,24 @@ end
 
 --- Valores de la referencia
 function This_MOD.setting_mod()
-    --- Otros valores
-    This_MOD.Prefix      = "zzzYAIM0425-5000-"
-    This_MOD.name        = "loader"
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Referencias
-    This_MOD.newSubgroup = This_MOD.Prefix .. This_MOD.name
-    This_MOD.oldSubgroup = "splitter"
+    --- Valores de referencia
+    This_MOD.ref = {}
+    This_MOD.ref.under = "underground-belt"
+    This_MOD.ref.loader = data.raw["loader-1x1"]["loader-1x1"]
+    This_MOD.ref.subgroup = This_MOD.prefix .. This_MOD.name
 
-    This_MOD.Under       = "underground-belt"
-    This_MOD.Loader      = data.raw["loader-1x1"]["loader-1x1"]
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Crear el subgroup
+    local Old_subgroup = GPrefix.items["splitter"].subgroup
+    GPrefix.duplicate_subgroup(Old_subgroup, This_MOD.ref.subgroup)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Contenedor de datos
-    This_MOD.Tiers       = {
+    This_MOD.tiers = {
         [""]             = { color = { r = 210, g = 180, b = 080 } },
         ["fast-"]        = { color = { r = 210, g = 060, b = 060 } },
         ["express-"]     = { color = { r = 080, g = 180, b = 210 } },
@@ -60,22 +65,23 @@ function This_MOD.setting_mod()
     }
 
     --- Variables a usar
-    local Icons         = "__" .. This_MOD.Prefix .. This_MOD.name .. "__/graphics/icons/"
-    local Entity        = "__" .. This_MOD.Prefix .. This_MOD.name .. "__/graphics/entities/"
+    local Graphics = "__" .. This_MOD.prefix .. This_MOD.name .. "__/graphics/"
 
     --- Inicializar la variable
-    This_MOD.Graphics    = {
-        Icon   = {
-            Base = Icons .. "base.png",
-            Mask = Icons .. "mask.png"
+    This_MOD.graphics = {
+        icon = {
+            base = Graphics .. "icon-base.png",
+            mask = Graphics .. "icon-mask.png"
         },
-        Entity = {
-            Back   = Entity .. "back.png",
-            Base   = Entity .. "base.png",
-            Mask   = Entity .. "mask.png",
-            Shadow = Entity .. "shadow.png"
+        entity = {
+            back = Graphics .. "entity-back.png",
+            base = Graphics .. "entity-base.png",
+            mask = Graphics .. "entity-mask.png",
+            shadow = Graphics .. "entity-shadow.png"
         }
     }
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -88,8 +94,8 @@ end
 
 --- Entidades a afectar
 function This_MOD.BuildTiers()
-    local toFind = string.gsub(This_MOD.Under, "%-", "%%-")
-    for _, Entity in pairs(data.raw[This_MOD.Under]) do
+    local toFind = string.gsub(This_MOD.ref.under, "%-", "%%-")
+    for _, Entity in pairs(data.raw[This_MOD.ref.under]) do
         --- Validación
         if Entity.hidden then goto JumpEntity end
         if not Entity.minable then goto JumpEntity end
@@ -99,11 +105,11 @@ function This_MOD.BuildTiers()
         local tier = GPrefix.delete_prefix(Entity.name)
         tier = string.gsub(tier, "^[0-9%-]+", "")
         tier = string.gsub(tier, toFind, "")
-        if not This_MOD.Tiers[tier] then goto JumpEntity end
+        if not This_MOD.tiers[tier] then goto JumpEntity end
 
         --- Crear el espacio para la entidad
-        local Space         = This_MOD.Tiers[tier] or {}
-        This_MOD.Tiers[tier] = Space
+        local Space          = This_MOD.tiers[tier] or {}
+        This_MOD.tiers[tier] = Space
 
         --- Guardar la información
         if Entity.minable and Entity.minable.results then
@@ -137,9 +143,9 @@ function This_MOD.BuildTiers()
     end
 
     --- Niveles sin  entidades
-    for key, Tier in pairs(This_MOD.Tiers) do
+    for key, Tier in pairs(This_MOD.tiers) do
         if not Tier.name then
-            This_MOD.Tiers[key] = nil
+            This_MOD.tiers[key] = nil
         end
     end
 end
@@ -160,14 +166,14 @@ function This_MOD.CreateRecipe(tier)
     recipe.subgroup              = This_MOD.newSubgroup
 
     --- Nombre, apodo y descripción
-    local toFind                 = string.gsub(This_MOD.Under, "%-", "%%-")
-    recipe.name                  = This_MOD.Prefix .. GPrefix.delete_prefix(tier.item.name)
+    local toFind                 = string.gsub(This_MOD.ref.under, "%-", "%%-")
+    recipe.name                  = This_MOD.prefix .. GPrefix.delete_prefix(tier.item.name)
     recipe.name                  = string.gsub(recipe.name, toFind, This_MOD.name)
 
-    local localised_name         = { "entity-name." .. This_MOD.Prefix .. tier.name .. This_MOD.name }
+    local localised_name         = { "entity-name." .. This_MOD.prefix .. tier.name .. This_MOD.name }
     recipe.localised_name        = { "", localised_name }
 
-    local localised_description  = { "entity-description." .. This_MOD.Prefix .. This_MOD.name }
+    local localised_description  = { "entity-description." .. This_MOD.prefix .. This_MOD.name }
     recipe.localised_description = { "", localised_description }
 
     --- Remplazar el resultado principal
@@ -175,23 +181,23 @@ function This_MOD.CreateRecipe(tier)
     result.name                  = recipe.name
 
     --- Remplazar los ingredientes
-    toFind                       = string.gsub(This_MOD.Under, "%-", "%%-")
+    toFind                       = string.gsub(This_MOD.ref.under, "%-", "%%-")
     for _, ingredient in pairs(recipe.ingredients) do
         if string.find(ingredient.name, toFind) then
             local name = GPrefix.delete_prefix(ingredient.name)
             name = string.gsub(name, "^[0-9%-]+", "")
             name = string.gsub(name, toFind, "")
-            if This_MOD.Tiers[name] then
+            if This_MOD.tiers[name] then
                 ingredient.name = string.gsub(ingredient.name, toFind, This_MOD.name)
-                ingredient.name = This_MOD.Prefix .. GPrefix.delete_prefix(ingredient.name)
+                ingredient.name = This_MOD.prefix .. GPrefix.delete_prefix(ingredient.name)
             end
         end
     end
 
     --- Imagen de la receta
     recipe.icons = {
-        { icon = This_MOD.Graphics.Icon.Base },
-        { icon = This_MOD.Graphics.Icon.Mask, tint = tier.color },
+        { icon = This_MOD.graphics.icon.base },
+        { icon = This_MOD.graphics.icon.mask, tint = tier.color },
     }
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -221,20 +227,20 @@ function This_MOD.CreateItem(tier)
     item.subgroup               = This_MOD.newSubgroup
 
     --- Nombre, apodo y descripción
-    item.name                   = This_MOD.Prefix .. GPrefix.delete_prefix(tier.item.name)
-    local toFind                = string.gsub(This_MOD.Under, "%-", "%%-")
+    item.name                   = This_MOD.prefix .. GPrefix.delete_prefix(tier.item.name)
+    local toFind                = string.gsub(This_MOD.ref.under, "%-", "%%-")
     item.name                   = string.gsub(item.name, toFind, This_MOD.name)
 
-    local localised_name        = { "entity-name." .. This_MOD.Prefix .. tier.name .. This_MOD.name }
+    local localised_name        = { "entity-name." .. This_MOD.prefix .. tier.name .. This_MOD.name }
     item.localised_name         = { "", localised_name }
 
-    local localised_description = { "entity-description." .. This_MOD.Prefix .. This_MOD.name }
+    local localised_description = { "entity-description." .. This_MOD.prefix .. This_MOD.name }
     item.localised_description  = { "", localised_description }
 
     item.place_result           = item.name
     item.icons                  = {
-        { icon = This_MOD.Graphics.Icon.Base },
-        { icon = This_MOD.Graphics.Icon.Mask, tint = tier.color },
+        { icon = This_MOD.graphics.icon.base },
+        { icon = This_MOD.graphics.icon.mask, tint = tier.color },
     }
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -262,7 +268,7 @@ function This_MOD.CreateEntity(tier)
 
     local fast_replaceable_group  = entity.fast_replaceable_group
     fast_replaceable_group        = GPrefix.delete_prefix(fast_replaceable_group)
-    entity.fast_replaceable_group = This_MOD.Prefix .. fast_replaceable_group
+    entity.fast_replaceable_group = This_MOD.prefix .. fast_replaceable_group
 
     entity.filter_count           = 5
     entity.container_distance     = 1
@@ -270,7 +276,7 @@ function This_MOD.CreateEntity(tier)
     entity.structure              = {
         back_patch = {
             sheet = {
-                filename = This_MOD.Graphics.Entity.Back,
+                filename = This_MOD.graphics.entity.back,
                 priority = "extra-high",
                 shift = { 0, 0 },
                 height = 96,
@@ -282,7 +288,7 @@ function This_MOD.CreateEntity(tier)
             sheets = {
                 {
                     draw_as_shadow = true,
-                    filename = This_MOD.Graphics.Entity.Shadow,
+                    filename = This_MOD.graphics.entity.shadow,
                     priority = "medium",
                     shift = { 0.5, 0 },
                     height = 96,
@@ -290,7 +296,7 @@ function This_MOD.CreateEntity(tier)
                     scale = 0.5
                 },
                 {
-                    filename = This_MOD.Graphics.Entity.Base,
+                    filename = This_MOD.graphics.entity.base,
                     priority = "extra-high",
                     shift = { 0, 0 },
                     height = 96,
@@ -298,7 +304,7 @@ function This_MOD.CreateEntity(tier)
                     scale = 0.5
                 },
                 {
-                    filename = This_MOD.Graphics.Entity.Mask,
+                    filename = This_MOD.graphics.entity.mask,
                     priority = "extra-high",
                     shift = { 0, 0 },
                     height = 96,
@@ -312,7 +318,7 @@ function This_MOD.CreateEntity(tier)
             sheets = {
                 {
                     draw_as_shadow = true,
-                    filename = This_MOD.Graphics.Entity.Shadow,
+                    filename = This_MOD.graphics.entity.shadow,
                     priority = "medium",
                     shift = { 0.5, 0 },
                     height = 96,
@@ -320,7 +326,7 @@ function This_MOD.CreateEntity(tier)
                     scale = 0.5,
                 },
                 {
-                    filename = This_MOD.Graphics.Entity.Base,
+                    filename = This_MOD.graphics.entity.base,
                     priority = "extra-high",
                     shift = { 0, 0 },
                     height = 96,
@@ -329,7 +335,7 @@ function This_MOD.CreateEntity(tier)
                     y = 96,
                 },
                 {
-                    filename = This_MOD.Graphics.Entity.Mask,
+                    filename = This_MOD.graphics.entity.mask,
                     priority = "extra-high",
                     shift = { 0, 0 },
                     height = 96,
@@ -343,22 +349,22 @@ function This_MOD.CreateEntity(tier)
     }
 
     entity.icons                  = {
-        { icon = This_MOD.Graphics.Icon.Base },
-        { icon = This_MOD.Graphics.Icon.Mask, tint = tier.color },
+        { icon = This_MOD.graphics.icon.base },
+        { icon = This_MOD.graphics.icon.mask, tint = tier.color },
     }
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     ---> Sobre escribir los valores variables
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    entity.name                   = This_MOD.Prefix .. GPrefix.delete_prefix(tier.entity.name)
-    local toFind                  = string.gsub(This_MOD.Under, "%-", "%%-")
+    entity.name                   = This_MOD.prefix .. GPrefix.delete_prefix(tier.entity.name)
+    local toFind                  = string.gsub(This_MOD.ref.under, "%-", "%%-")
     entity.name                   = string.gsub(entity.name, toFind, This_MOD.name)
 
-    local localised_name          = { "entity-name." .. This_MOD.Prefix .. tier.name .. This_MOD.name }
+    local localised_name          = { "entity-name." .. This_MOD.prefix .. tier.name .. This_MOD.name }
     entity.localised_name         = { "", localised_name }
 
-    local localised_description   = { "entity-description." .. This_MOD.Prefix .. This_MOD.name }
+    local localised_description   = { "entity-description." .. This_MOD.prefix .. This_MOD.name }
     entity.localised_description  = { "", localised_description }
 
     entity.minable                = {
@@ -374,10 +380,10 @@ function This_MOD.CreateEntity(tier)
         local name = GPrefix.delete_prefix(entity.next_upgrade)
         name = string.gsub(name, "^[0-9%-]+", "")
         name = string.gsub(name, toFind, "")
-        if This_MOD.Tiers[name] then
+        if This_MOD.tiers[name] then
             local next_upgrade  = GPrefix.delete_prefix(entity.next_upgrade)
             next_upgrade        = string.gsub(next_upgrade, toFind, This_MOD.name)
-            entity.next_upgrade = This_MOD.Prefix .. next_upgrade
+            entity.next_upgrade = This_MOD.prefix .. next_upgrade
         else
             entity.next_upgrade = nil
         end
@@ -385,9 +391,9 @@ function This_MOD.CreateEntity(tier)
         entity.next_upgrade = nil
     end
 
-    entity.icons                  = {
-        { icon = This_MOD.Graphics.Icon.Base },
-        { icon = This_MOD.Graphics.Icon.Mask, tint = tier.color },
+    entity.icons                    = {
+        { icon = This_MOD.graphics.icon.base },
+        { icon = This_MOD.graphics.icon.mask, tint = tier.color },
     }
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
