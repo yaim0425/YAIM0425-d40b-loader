@@ -114,21 +114,21 @@ function This_MOD.build_tiers()
             if not GPrefix.recipes[Item.name] then break end
 
             --- Identificar el tier
-            local Tier = GPrefix.delete_prefix(Entity.name)
-            Tier = string.gsub(Tier, "^[0-9%-]+", "")
-            Tier = string.gsub(Tier, This_MOD.ref.to_find, "")
-            if not This_MOD.tiers[Tier] then break end
+            local Name = GPrefix.delete_prefix(Entity.name)
+            Name = string.gsub(Name, "^[0-9%-]+", "")
+            Name = string.gsub(Name, This_MOD.ref.to_find, "")
+            if not This_MOD.tiers[Name] then break end
 
             --- Crear el espacio para la información
-            local Space = This_MOD.tiers[Tier] or {}
-            This_MOD.tiers[Tier] = Space
+            local Tier = This_MOD.tiers[Name] or {}
+            This_MOD.tiers[Name] = Tier
 
             --- Guardar la información
-            Space.item = Item
-            Space.name = Tier
-            Space.entity = Entity
-            Space.recipe = GPrefix.recipes[Space.item.name][1]
-            Space.technology = GPrefix.get_technology(Space.recipe.name)
+            Tier.item = Item
+            Tier.name = Name
+            Tier.entity = Entity
+            Tier.recipe = GPrefix.recipes[Tier.item.name][1]
+            Tier.technology = GPrefix.get_technology(Tier.recipe.name)
         until true
     end
 
