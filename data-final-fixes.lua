@@ -21,7 +21,7 @@ function This_MOD.start()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Entidades a afectar
-    This_MOD.build_tiers()
+    This_MOD.build_info()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -99,7 +99,7 @@ end
 ---------------------------------------------------------------------------------------------------
 
 --- Entidades a afectar
-function This_MOD.build_tiers()
+function This_MOD.build_info()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Recorrer las entidades
@@ -128,7 +128,7 @@ function This_MOD.build_tiers()
             Space.name = Name
             Space.entity = Entity
             Space.recipe = GPrefix.recipes[Space.item.name][1]
-            Space.tech = GPrefix.get_technology(Space.recipe.name)
+            Space.tech = GPrefix.get_technology(Space.recipe)
         until true
     end
 
@@ -220,7 +220,7 @@ function This_MOD.create_item(tier)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Sobre escribir los valores constantes
-    Item.subgroup = This_MOD.newSubgroup
+    Item.subgroup = This_MOD.ref.subgroup
 
     --- Nombre, apodo y descripción
     Item.name = This_MOD.prefix .. GPrefix.delete_prefix(tier.item.name)
