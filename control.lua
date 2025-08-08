@@ -83,7 +83,7 @@ end
 --- La entidad tiene un inventario
 --- @param entities table # Entidad a evaluar
 --- @return boolean
-function This_MOD.hasInventory(entities)
+function This_MOD.has_inventory(entities)
     for _, entity in pairs(entities) do
         if entity.get_inventory(defines.inventory.chest) or
             entity.get_inventory(defines.inventory.furnace_source) or
@@ -163,7 +163,7 @@ function This_MOD.onBuiltEntity(event)
     end
 
     --- Inicio:  X  [ <= ]     Resultado:  X  [ =< ]
-    if This_MOD.hasInventory(belt) then
+    if This_MOD.has_inventory(belt) then
         if not This_MOD.isDirection(loading, Built.direction) then
             Built.direction = This_MOD.opposite[Built.direction]
             Built.rotate()
@@ -172,7 +172,7 @@ function This_MOD.onBuiltEntity(event)
     end
 
     --- Inicio:  X  [ => ]     Resultado:  X  [ => ]
-    if This_MOD.hasInventory(loading) then
+    if This_MOD.has_inventory(loading) then
         return
     end
 end
