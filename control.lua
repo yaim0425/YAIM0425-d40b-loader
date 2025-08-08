@@ -75,12 +75,18 @@ end
 
 --- Sumar dos vectores
 function This_MOD.add_vectors(v1, v2)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     return { v1.x + v2.x, v1.y + v2.y }
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 --- Devuelve todas las entidades situadas a
 --- 1 baldosa en la dirección especificada
 function This_MOD.get_neighbour_entities(entity, direction)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     local dir2vector = {
         [defines.direction.north] = { x = 0, y = -1 },
         [defines.direction.south] = { x = 0, y = 1 },
@@ -88,14 +94,20 @@ function This_MOD.get_neighbour_entities(entity, direction)
         [defines.direction.west]  = { x = -1, y = 0 },
     }
 
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     local Table = { position = This_MOD.add_vectors(entity.position, dir2vector[direction]) }
     return entity.surface.find_entities_filtered(Table)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 --- La entidad tiene un inventario
 --- @param entities table # Entidad a evaluar
 --- @return boolean
 function This_MOD.has_inventory(entities)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     for _, entity in pairs(entities) do
         local Flag = false
         Flag = Flag or entity.get_inventory(defines.inventory.chest)
@@ -105,7 +117,10 @@ function This_MOD.has_inventory(entities)
         Flag = Flag or entity.get_inventory(defines.inventory.rocket_silo_rocket)
         if Flag then return true end
     end
+
     return false
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 --- Detección de la cara del cinturón
@@ -113,6 +128,8 @@ end
 --- @param direction table # Dirección esperada
 --- @return boolean
 function This_MOD.isDirection(entities, direction)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     for _, entity in pairs(entities) do
         local Flag = false
         Flag = Flag or entity.type == "splitter"
@@ -122,12 +139,17 @@ function This_MOD.isDirection(entities, direction)
         Flag = Flag and entity.direction == direction
         if Flag then return true end
     end
+
     return false
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 --- Receptor de los eventos a ejecutar
 --- @param event table
 function This_MOD.on_builtEntity(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     --- Renombrar la entidad a construir
     local Entity = Data.Event.entity
 
@@ -190,6 +212,8 @@ function This_MOD.on_builtEntity(Data)
     if This_MOD.has_inventory(Loading) then
         return
     end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 ---------------------------------------------------------------------------------------------------
