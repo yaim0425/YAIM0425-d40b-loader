@@ -126,8 +126,8 @@ function This_MOD.on_builtEntity(event)
     if not Built or not Built.valid then return end
 
     --- Obtener las entidades de ambos extremos
-    local belt = This_MOD.get_neighbour_entities(Built, Built.direction)                      -- Front [ > ]
-    local loading = This_MOD.get_neighbour_entities(Built, This_MOD.opposite[Built.direction]) -- Back  [ = ]
+    local Belt = This_MOD.get_neighbour_entities(Built, Built.direction)                      -- Front [ > ]
+    local Loading = This_MOD.get_neighbour_entities(Built, This_MOD.opposite[Built.direction]) -- Back  [ = ]
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -143,28 +143,28 @@ function This_MOD.on_builtEntity(event)
 
     --- Inicio:  >  [ <= ]     Resultado:  >  [ >= ]
     --- Inicio: =>  [ <= ]     Resultado: =>  [ >= ]
-    if This_MOD.isDirection(belt, This_MOD.opposite[Built.direction]) then
+    if This_MOD.isDirection(Belt, This_MOD.opposite[Built.direction]) then
         Built.rotate()
         return
     end
 
     --- Inicio:  >  [ => ]     Resultado:  >  [ >= ]
     --- Inicio: =>  [ => ]     Resultado: =>  [ >= ]
-    if This_MOD.isDirection(loading, Built.direction) then
+    if This_MOD.isDirection(Loading, Built.direction) then
         Built.direction = This_MOD.opposite[Built.direction]
         Built.rotate()
         return
     end
 
     --- Inicio:  <  [ => ]     Resultado:  <  [ <= ]
-    if This_MOD.isDirection(loading, This_MOD.opposite[Built.direction]) then
+    if This_MOD.isDirection(Loading, This_MOD.opposite[Built.direction]) then
         Built.direction = This_MOD.opposite[Built.direction]
         return
     end
 
     --- Inicio:  X  [ <= ]     Resultado:  X  [ =< ]
-    if This_MOD.has_inventory(belt) then
-        if not This_MOD.isDirection(loading, Built.direction) then
+    if This_MOD.has_inventory(Belt) then
+        if not This_MOD.isDirection(Loading, Built.direction) then
             Built.direction = This_MOD.opposite[Built.direction]
             Built.rotate()
         end
@@ -172,7 +172,7 @@ function This_MOD.on_builtEntity(event)
     end
 
     --- Inicio:  X  [ => ]     Resultado:  X  [ => ]
-    if This_MOD.has_inventory(loading) then
+    if This_MOD.has_inventory(Loading) then
         return
     end
 end
