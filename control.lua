@@ -127,7 +127,7 @@ end
 --- @param entities table # Entidad a evaluar
 --- @param direction table # Dirección esperada
 --- @return boolean
-function This_MOD.isDirection(entities, direction)
+function This_MOD.is_direction(entities, direction)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     for _, entity in pairs(entities) do
@@ -180,28 +180,28 @@ function This_MOD.on_builtEntity(Data)
 
     --- Inicio:  >  [ <= ]     Resultado:  >  [ >= ]
     --- Inicio: =>  [ <= ]     Resultado: =>  [ >= ]
-    if This_MOD.isDirection(Belt, This_MOD.opposite[Entity.direction]) then
+    if This_MOD.is_direction(Belt, This_MOD.opposite[Entity.direction]) then
         Entity.rotate()
         return
     end
 
     --- Inicio:  >  [ => ]     Resultado:  >  [ >= ]
     --- Inicio: =>  [ => ]     Resultado: =>  [ >= ]
-    if This_MOD.isDirection(Loading, Entity.direction) then
+    if This_MOD.is_direction(Loading, Entity.direction) then
         Entity.direction = This_MOD.opposite[Entity.direction]
         Entity.rotate()
         return
     end
 
     --- Inicio:  <  [ => ]     Resultado:  <  [ <= ]
-    if This_MOD.isDirection(Loading, This_MOD.opposite[Entity.direction]) then
+    if This_MOD.is_direction(Loading, This_MOD.opposite[Entity.direction]) then
         Entity.direction = This_MOD.opposite[Entity.direction]
         return
     end
 
     --- Inicio:  X  [ <= ]     Resultado:  X  [ =< ]
     if This_MOD.has_inventory(Belt) then
-        if not This_MOD.isDirection(Loading, Entity.direction) then
+        if not This_MOD.is_direction(Loading, Entity.direction) then
             Entity.direction = This_MOD.opposite[Entity.direction]
             Entity.rotate()
         end
