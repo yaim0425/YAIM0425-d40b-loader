@@ -8,6 +8,11 @@ local This_MOD = {}
 
 ---------------------------------------------------------------------------------------------------
 
+--- Cargar las funciones
+require("__zzzYAIM0425-0000-lib__/control")
+
+---------------------------------------------------------------------------------------------------
+
 --- Iniciar el modulo
 function This_MOD.start()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -47,8 +52,15 @@ function This_MOD.load_events()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     -- Agregar la acción a los eventos
-    script.on_event(defines.events.on_built_entity, This_MOD.on_builtEntity, This_MOD.filter)
-    script.on_event(defines.events.on_robot_built_entity, This_MOD.on_builtEntity, This_MOD.filter)
+    script.on_event({
+        defines.events.on_built_entity,
+        defines.events.on_robot_built_entity,
+        defines.events.script_raised_built,
+        defines.events.script_raised_revive,
+        defines.events.on_space_platform_built_entity,
+    }, function(events)
+        This_MOD.on_builtEntity(GPrefix.create_data(events, This_MOD))
+    end, This_MOD.filter)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -115,18 +127,22 @@ end
 
 --- Receptor de los eventos a ejecutar
 --- @param event table
-function This_MOD.on_builtEntity(event)
+function This_MOD.on_builtEntity(Data)
     --- Renombrar la entidad a construir
-    local Built = event.entity
+    local Entity = Data.Event.entity
 
     --- ¿Construcción inválida? no te molestes con la falsa propiedad "revived" de los
     --- Nanobots/Bluebuild anteriores a la versión 1.0, ahora esas travesuras sólo pueden pasar en eventos script_raised_*.
     --- Tampoco es necesario comprobar el tipo de entidad ya que podemos filtrarlo en el manejador de eventos
-    if not Built or not Built.valid then return end
+    if not Entity then return end
+    if not Entity.valid then return end
+    if Entity.name == "gosht" then return end
+
+    GPrefix.var_dump(Entity.name)
 
     --- Obtener las entidades de ambos extremos
-    local Belt = This_MOD.get_neighbour_entities(Built, Built.direction)                      -- Front [ > ]
-    local Loading = This_MOD.get_neighbour_entities(Built, This_MOD.opposite[Built.direction]) -- Back  [ = ]
+    local Belt = This_MOD.get_neighbour_entities(Entity, Entity.direction)                       -- Front [ > ]
+    local Loading = This_MOD.get_neighbour_entities(Entity, This_MOD.opposite[Entity.direction]) -- Back  [ = ]
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -142,30 +158,30 @@ function This_MOD.on_builtEntity(event)
 
     --- Inicio:  >  [ <= ]     Resultado:  >  [ >= ]
     --- Inicio: =>  [ <= ]     Resultado: =>  [ >= ]
-    if This_MOD.isDirection(Belt, This_MOD.opposite[Built.direction]) then
-        Built.rotate()
+    if This_MOD.isDirection(Belt, This_MOD.opposite[Entity.direction]) then
+        Entity.rotate()
         return
     end
 
     --- Inicio:  >  [ => ]     Resultado:  >  [ >= ]
     --- Inicio: =>  [ => ]     Resultado: =>  [ >= ]
-    if This_MOD.isDirection(Loading, Built.direction) then
-        Built.direction = This_MOD.opposite[Built.direction]
-        Built.rotate()
+    if This_MOD.isDirection(Loading, Entity.direction) then
+        Entity.direction = This_MOD.opposite[Entity.direction]
+        Entity.rotate()
         return
     end
 
     --- Inicio:  <  [ => ]     Resultado:  <  [ <= ]
-    if This_MOD.isDirection(Loading, This_MOD.opposite[Built.direction]) then
-        Built.direction = This_MOD.opposite[Built.direction]
+    if This_MOD.isDirection(Loading, This_MOD.opposite[Entity.direction]) then
+        Entity.direction = This_MOD.opposite[Entity.direction]
         return
     end
 
     --- Inicio:  X  [ <= ]     Resultado:  X  [ =< ]
     if This_MOD.has_inventory(Belt) then
-        if not This_MOD.isDirection(Loading, Built.direction) then
-            Built.direction = This_MOD.opposite[Built.direction]
-            Built.rotate()
+        if not This_MOD.isDirection(Loading, Entity.direction) then
+            Entity.direction = This_MOD.opposite[Entity.direction]
+            Entity.rotate()
         end
         return
     end
