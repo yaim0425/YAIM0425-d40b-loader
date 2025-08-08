@@ -11,7 +11,7 @@ local This_MOD = {}
 --- Iniciar el modulo
 function This_MOD.start()
     --- Valores de la referencia
-    This_MOD.setSetting()
+    This_MOD.setting_mod()
 
     -- Agregar la acción a los eventos
     script.on_event(defines.events.on_built_entity, This_MOD.onBuiltEntity, This_MOD.Filter)
@@ -19,7 +19,7 @@ function This_MOD.start()
 end
 
 --- Valores de la referencia
-function This_MOD.setSetting()
+function This_MOD.setting_mod()
     --- Direcciones con las que funciona
     This_MOD.Opposite = {
         [defines.direction.north] = defines.direction.south,
