@@ -47,8 +47,8 @@ function This_MOD.load_events()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     -- Agregar la acción a los eventos
-    script.on_event(defines.events.on_built_entity, This_MOD.onBuiltEntity, This_MOD.filter)
-    script.on_event(defines.events.on_robot_built_entity, This_MOD.onBuiltEntity, This_MOD.filter)
+    script.on_event(defines.events.on_built_entity, This_MOD.on_builtEntity, This_MOD.filter)
+    script.on_event(defines.events.on_robot_built_entity, This_MOD.on_builtEntity, This_MOD.filter)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -116,7 +116,7 @@ end
 
 --- Receptor de los eventos a ejecutar
 --- @param event table
-function This_MOD.onBuiltEntity(event)
+function This_MOD.on_builtEntity(event)
     --- Renombrar la entidad a construir
     local Built = event.entity
 
