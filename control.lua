@@ -12,12 +12,14 @@ local This_MOD = {}
 function This_MOD.start()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
+    --- Obtener información desde el nombre de MOD
+    GPrefix.split_name_folder(This_MOD)
+
     --- Valores de la referencia
     This_MOD.setting_mod()
 
-    -- Agregar la acción a los eventos
-    script.on_event(defines.events.on_built_entity, This_MOD.onBuiltEntity, This_MOD.Filter)
-    script.on_event(defines.events.on_robot_built_entity, This_MOD.onBuiltEntity, This_MOD.Filter)
+    --- Cambiar la propiedad necesaria
+    This_MOD.load_events()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
