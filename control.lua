@@ -29,7 +29,7 @@ function This_MOD.setting_mod()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Direcciones con las que funciona
-    This_MOD.Opposite = {
+    This_MOD.opposite = {
         [defines.direction.north] = defines.direction.south,
         [defines.direction.south] = defines.direction.north,
         [defines.direction.east]  = defines.direction.west,
@@ -37,7 +37,7 @@ function This_MOD.setting_mod()
     }
 
     --- Filtrar los cargadores
-    This_MOD.Filter = { { filter = "type", type = "loader-1x1" } }
+    This_MOD.filter = { { filter = "type", type = "loader-1x1" } }
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -47,8 +47,8 @@ function This_MOD.load_events()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     -- Agregar la acción a los eventos
-    script.on_event(defines.events.on_built_entity, This_MOD.onBuiltEntity, This_MOD.Filter)
-    script.on_event(defines.events.on_robot_built_entity, This_MOD.onBuiltEntity, This_MOD.Filter)
+    script.on_event(defines.events.on_built_entity, This_MOD.onBuiltEntity, This_MOD.filter)
+    script.on_event(defines.events.on_robot_built_entity, This_MOD.onBuiltEntity, This_MOD.filter)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -127,7 +127,7 @@ function This_MOD.onBuiltEntity(event)
 
     --- Obtener las entidades de ambos extremos
     local belt = This_MOD.getNeighbourEntities(Built, Built.direction)                      -- Front [ > ]
-    local loading = This_MOD.getNeighbourEntities(Built, This_MOD.Opposite[Built.direction]) -- Back  [ = ]
+    local loading = This_MOD.getNeighbourEntities(Built, This_MOD.opposite[Built.direction]) -- Back  [ = ]
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -143,7 +143,7 @@ function This_MOD.onBuiltEntity(event)
 
     --- Inicio:  >  [ <= ]     Resultado:  >  [ >= ]
     --- Inicio: =>  [ <= ]     Resultado: =>  [ >= ]
-    if This_MOD.isDirection(belt, This_MOD.Opposite[Built.direction]) then
+    if This_MOD.isDirection(belt, This_MOD.opposite[Built.direction]) then
         Built.rotate()
         return
     end
@@ -151,21 +151,21 @@ function This_MOD.onBuiltEntity(event)
     --- Inicio:  >  [ => ]     Resultado:  >  [ >= ]
     --- Inicio: =>  [ => ]     Resultado: =>  [ >= ]
     if This_MOD.isDirection(loading, Built.direction) then
-        Built.direction = This_MOD.Opposite[Built.direction]
+        Built.direction = This_MOD.opposite[Built.direction]
         Built.rotate()
         return
     end
 
     --- Inicio:  <  [ => ]     Resultado:  <  [ <= ]
-    if This_MOD.isDirection(loading, This_MOD.Opposite[Built.direction]) then
-        Built.direction = This_MOD.Opposite[Built.direction]
+    if This_MOD.isDirection(loading, This_MOD.opposite[Built.direction]) then
+        Built.direction = This_MOD.opposite[Built.direction]
         return
     end
 
     --- Inicio:  X  [ <= ]     Resultado:  X  [ =< ]
     if This_MOD.hasInventory(belt) then
         if not This_MOD.isDirection(loading, Built.direction) then
-            Built.direction = This_MOD.Opposite[Built.direction]
+            Built.direction = This_MOD.opposite[Built.direction]
             Built.rotate()
         end
         return
