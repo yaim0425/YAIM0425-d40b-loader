@@ -85,14 +85,13 @@ end
 --- @return boolean
 function This_MOD.has_inventory(entities)
     for _, entity in pairs(entities) do
-        if entity.get_inventory(defines.inventory.chest) or
-            entity.get_inventory(defines.inventory.furnace_source) or
-            entity.get_inventory(defines.inventory.assembling_machine_input) or
-            entity.get_inventory(defines.inventory.lab_input) or
-            entity.get_inventory(defines.inventory.rocket_silo_rocket)
-        then
-            return true
-        end
+        local Flag = false
+        Flag = Flag or entity.get_inventory(defines.inventory.chest)
+        Flag = Flag or entity.get_inventory(defines.inventory.furnace_source)
+        Flag = Flag or entity.get_inventory(defines.inventory.assembling_machine_input)
+        Flag = Flag or entity.get_inventory(defines.inventory.lab_input)
+        Flag = Flag or entity.get_inventory(defines.inventory.rocket_silo_rocket)
+        if Flag then return true end
     end
     return false
 end
