@@ -4,24 +4,24 @@
 
 --- Contenedor de funciones y datos usados
 --- unicamente en este archivo
-local ThisMOD = {}
+local This_MOD = {}
 
 ---------------------------------------------------------------------------------------------------
 
 --- Iniciar el modulo
-function ThisMOD.Start()
+function This_MOD.Start()
     --- Valores de la referencia
-    ThisMOD.setSetting()
+    This_MOD.setSetting()
 
     -- Agregar la acción a los eventos
-    script.on_event(defines.events.on_built_entity, ThisMOD.onBuiltEntity, ThisMOD.Filter)
-    script.on_event(defines.events.on_robot_built_entity, ThisMOD.onBuiltEntity, ThisMOD.Filter)
+    script.on_event(defines.events.on_built_entity, This_MOD.onBuiltEntity, This_MOD.Filter)
+    script.on_event(defines.events.on_robot_built_entity, This_MOD.onBuiltEntity, This_MOD.Filter)
 end
 
 --- Valores de la referencia
-function ThisMOD.setSetting()
+function This_MOD.setSetting()
     --- Direcciones con las que funciona
-    ThisMOD.Opposite = {
+    This_MOD.Opposite = {
         [defines.direction.north] = defines.direction.south,
         [defines.direction.south] = defines.direction.north,
         [defines.direction.east]  = defines.direction.west,
@@ -29,7 +29,7 @@ function ThisMOD.setSetting()
     }
 
     --- Filtrar los cargadores
-    ThisMOD.Filter = { { filter = "type", type = "loader-1x1" } }
+    This_MOD.Filter = { { filter = "type", type = "loader-1x1" } }
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -41,13 +41,13 @@ end
 ---------------------------------------------------------------------------------------------------
 
 --- Sumar dos vectores
-function ThisMOD.AddVectors(v1, v2)
+function This_MOD.AddVectors(v1, v2)
     return { v1.x + v2.x, v1.y + v2.y }
 end
 
 --- Devuelve todas las entidades situadas a
 --- 1 baldosa en la dirección especificada
-function ThisMOD.getNeighbourEntities(entity, direction)
+function This_MOD.getNeighbourEntities(entity, direction)
     local dir2vector = {
         [defines.direction.north] = { x = 0, y = -1 },
         [defines.direction.south] = { x = 0, y = 1 },
@@ -55,14 +55,14 @@ function ThisMOD.getNeighbourEntities(entity, direction)
         [defines.direction.west]  = { x = -1, y = 0 },
     }
 
-    local Table = { position = ThisMOD.AddVectors(entity.position, dir2vector[direction]) }
+    local Table = { position = This_MOD.AddVectors(entity.position, dir2vector[direction]) }
     return entity.surface.find_entities_filtered(Table)
 end
 
 --- La entidad tiene un inventario
 --- @param entities table # Entidad a evaluar
 --- @return boolean
-function ThisMOD.hasInventory(entities)
+function This_MOD.hasInventory(entities)
     for _, entity in pairs(entities) do
         if entity.get_inventory(defines.inventory.chest) or
             entity.get_inventory(defines.inventory.furnace_source) or
@@ -80,7 +80,7 @@ end
 --- @param entities table # Entidad a evaluar
 --- @param direction table # Dirección esperada
 --- @return boolean
-function ThisMOD.isDirection(entities, direction)
+function This_MOD.isDirection(entities, direction)
     for _, entity in pairs(entities) do
         local Flag = false
         Flag = Flag or entity.type == "splitter"
@@ -95,7 +95,7 @@ end
 
 --- Receptor de los eventos a ejecutar
 --- @param event table
-function ThisMOD.onBuiltEntity(event)
+function This_MOD.onBuiltEntity(event)
     --- Renombrar la entidad a construir
     local Built = event.entity
 
@@ -105,8 +105,8 @@ function ThisMOD.onBuiltEntity(event)
     if not Built or not Built.valid then return end
 
     --- Obtener las entidades de ambos extremos
-    local belt = ThisMOD.getNeighbourEntities(Built, Built.direction)                      -- Front [ > ]
-    local loading = ThisMOD.getNeighbourEntities(Built, ThisMOD.Opposite[Built.direction]) -- Back  [ = ]
+    local belt = This_MOD.getNeighbourEntities(Built, Built.direction)                      -- Front [ > ]
+    local loading = This_MOD.getNeighbourEntities(Built, This_MOD.Opposite[Built.direction]) -- Back  [ = ]
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -122,36 +122,36 @@ function ThisMOD.onBuiltEntity(event)
 
     --- Inicio:  >  [ <= ]     Resultado:  >  [ >= ]
     --- Inicio: =>  [ <= ]     Resultado: =>  [ >= ]
-    if ThisMOD.isDirection(belt, ThisMOD.Opposite[Built.direction]) then
+    if This_MOD.isDirection(belt, This_MOD.Opposite[Built.direction]) then
         Built.rotate()
         return
     end
 
     --- Inicio:  >  [ => ]     Resultado:  >  [ >= ]
     --- Inicio: =>  [ => ]     Resultado: =>  [ >= ]
-    if ThisMOD.isDirection(loading, Built.direction) then
-        Built.direction = ThisMOD.Opposite[Built.direction]
+    if This_MOD.isDirection(loading, Built.direction) then
+        Built.direction = This_MOD.Opposite[Built.direction]
         Built.rotate()
         return
     end
 
     --- Inicio:  <  [ => ]     Resultado:  <  [ <= ]
-    if ThisMOD.isDirection(loading, ThisMOD.Opposite[Built.direction]) then
-        Built.direction = ThisMOD.Opposite[Built.direction]
+    if This_MOD.isDirection(loading, This_MOD.Opposite[Built.direction]) then
+        Built.direction = This_MOD.Opposite[Built.direction]
         return
     end
 
     --- Inicio:  X  [ <= ]     Resultado:  X  [ =< ]
-    if ThisMOD.hasInventory(belt) then
-        if not ThisMOD.isDirection(loading, Built.direction) then
-            Built.direction = ThisMOD.Opposite[Built.direction]
+    if This_MOD.hasInventory(belt) then
+        if not This_MOD.isDirection(loading, Built.direction) then
+            Built.direction = This_MOD.Opposite[Built.direction]
             Built.rotate()
         end
         return
     end
 
     --- Inicio:  X  [ => ]     Resultado:  X  [ => ]
-    if ThisMOD.hasInventory(loading) then
+    if This_MOD.hasInventory(loading) then
         return
     end
 end
@@ -165,6 +165,6 @@ end
 ---------------------------------------------------------------------------------------------------
 
 --- Iniciar el modulo
-ThisMOD.Start()
+This_MOD.Start()
 
 ---------------------------------------------------------------------------------------------------
