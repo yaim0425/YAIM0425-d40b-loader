@@ -10,16 +10,22 @@ local This_MOD = {}
 
 --- Iniciar el modulo
 function This_MOD.start()
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     --- Valores de la referencia
     This_MOD.setting_mod()
 
     -- Agregar la acción a los eventos
     script.on_event(defines.events.on_built_entity, This_MOD.onBuiltEntity, This_MOD.Filter)
     script.on_event(defines.events.on_robot_built_entity, This_MOD.onBuiltEntity, This_MOD.Filter)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 --- Valores de la referencia
 function This_MOD.setting_mod()
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     --- Direcciones con las que funciona
     This_MOD.Opposite = {
         [defines.direction.north] = defines.direction.south,
@@ -30,6 +36,8 @@ function This_MOD.setting_mod()
 
     --- Filtrar los cargadores
     This_MOD.Filter = { { filter = "type", type = "loader-1x1" } }
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 ---------------------------------------------------------------------------------------------------
