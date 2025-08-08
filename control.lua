@@ -68,7 +68,7 @@ end
 
 --- Devuelve todas las entidades situadas a
 --- 1 baldosa en la dirección especificada
-function This_MOD.getNeighbourEntities(entity, direction)
+function This_MOD.get_neighbour_entities(entity, direction)
     local dir2vector = {
         [defines.direction.north] = { x = 0, y = -1 },
         [defines.direction.south] = { x = 0, y = 1 },
@@ -126,8 +126,8 @@ function This_MOD.onBuiltEntity(event)
     if not Built or not Built.valid then return end
 
     --- Obtener las entidades de ambos extremos
-    local belt = This_MOD.getNeighbourEntities(Built, Built.direction)                      -- Front [ > ]
-    local loading = This_MOD.getNeighbourEntities(Built, This_MOD.opposite[Built.direction]) -- Back  [ = ]
+    local belt = This_MOD.get_neighbour_entities(Built, Built.direction)                      -- Front [ > ]
+    local loading = This_MOD.get_neighbour_entities(Built, This_MOD.opposite[Built.direction]) -- Back  [ = ]
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
