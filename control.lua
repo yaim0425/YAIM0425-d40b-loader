@@ -62,7 +62,7 @@ end
 ---------------------------------------------------------------------------------------------------
 
 --- Sumar dos vectores
-function This_MOD.AddVectors(v1, v2)
+function This_MOD.add_vectors(v1, v2)
     return { v1.x + v2.x, v1.y + v2.y }
 end
 
@@ -76,7 +76,7 @@ function This_MOD.getNeighbourEntities(entity, direction)
         [defines.direction.west]  = { x = -1, y = 0 },
     }
 
-    local Table = { position = This_MOD.AddVectors(entity.position, dir2vector[direction]) }
+    local Table = { position = This_MOD.add_vectors(entity.position, dir2vector[direction]) }
     return entity.surface.find_entities_filtered(Table)
 end
 
