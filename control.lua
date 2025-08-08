@@ -40,6 +40,17 @@ function This_MOD.setting_mod()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
+--- Cargar los eventos a ejecutar
+function This_MOD.load_events()
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    -- Agregar la acción a los eventos
+    script.on_event(defines.events.on_built_entity, This_MOD.onBuiltEntity, This_MOD.Filter)
+    script.on_event(defines.events.on_robot_built_entity, This_MOD.onBuiltEntity, This_MOD.Filter)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
+
 ---------------------------------------------------------------------------------------------------
 
 
