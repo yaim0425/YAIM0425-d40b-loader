@@ -174,23 +174,15 @@ function This_MOD.on_built_entity(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Variables a usar
-    local Front --- Belt
-    local Back  --- O/I
-
-    --- Direcciones a evaluar
+    local Input = Entity.loader_type == "input"
     local Direction = Entity.direction
     local Opposite = This_MOD.opposite[Entity.direction]
-
-    --- Entidades al frente y atras
-    if Entity.loader_type == "output" then
-        Front = This_MOD.get_neighbour_entities(Entity, Direction)
-        Back = This_MOD.get_neighbour_entities(Entity, Opposite)
-    end
-
-    if Entity.loader_type == "input" then
-        Front = This_MOD.get_neighbour_entities(Entity, Opposite)
-        Back = This_MOD.get_neighbour_entities(Entity, Direction)
-    end
+    local Front = This_MOD.get_neighbour_entities(Entity,
+        Input and Opposite or Direction --- Belt
+    )
+    local Back = This_MOD.get_neighbour_entities(Entity,
+        Input and Direction or Opposite --- O/I
+    )
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -200,10 +192,9 @@ function This_MOD.on_built_entity(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Valores a usar
-    local Input = Entity.loader_type == "input"
-    local Fron_inventory = This_MOD.has_inventory(Front)
-    local Back_inventory = This_MOD.has_inventory(Back)
+    local Front_inventory = This_MOD.has_inventory(Front)
     local Front_direction = This_MOD.is_direction(Front, Entity.direction)
+    local Back_inventory = This_MOD.has_inventory(Back)
     local Back_direction = This_MOD.is_direction(Back, Entity.direction)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -212,7 +203,7 @@ function This_MOD.on_built_entity(Data)
         return
     end
 
-    if Front and Fron_inventory then
+    if Front and Front_inventory then
         Entity.direction = Opposite
         return
     end
