@@ -96,9 +96,9 @@ function This_MOD.get_neighbour_entities(entity, direction)
     --- Converción de la direcciones
     local dir2vector = {
         [defines.direction.north] = { x = 0, y = -1 },
-        [defines.direction.east]  = { x = 1, y = 0 },
         [defines.direction.south] = { x = 0, y = 1 },
-        [defines.direction.west]  = { x = -1, y = 0 }
+        [defines.direction.west] = { x = -1, y = 0 },
+        [defines.direction.east] = { x = 1, y = 0 }
     }
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
