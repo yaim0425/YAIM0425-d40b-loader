@@ -214,11 +214,11 @@ function This_MOD.on_builtEntity(Data)
 
 
 
-    if Front and Back_direction then
+    if Front and Front_direction then
         return
     end
 
-    if Front and not Back_direction then
+    if Front and not Front_direction then
         Entity.rotate()
         return
     end
