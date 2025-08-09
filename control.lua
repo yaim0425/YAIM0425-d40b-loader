@@ -74,7 +74,7 @@ function This_MOD.load_events()
         defines.events.script_raised_revive,
         defines.events.on_space_platform_built_entity,
     }, function(events)
-        This_MOD.on_builtEntity(GPrefix.create_data(events, This_MOD))
+        This_MOD.on_built_entity(GPrefix.create_data(events, This_MOD))
     end)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -88,20 +88,12 @@ end
 
 ---------------------------------------------------------------------------------------------------
 
---- Sumar dos vectores
-function This_MOD.add_vectors(v1, v2)
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    return { v1.x + v2.x, v1.y + v2.y }
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-end
-
 --- Devuelve todas las entidades situadas a
 --- 1 baldosa en la dirección especificada
 function This_MOD.get_neighbour_entities(entity, direction)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
+    --- Converción de la direcciones
     local dir2vector = {
         [defines.direction.north] = { x = 0, y = -1 },
         [defines.direction.east]  = { x = 1, y = 0 },
@@ -111,15 +103,13 @@ function This_MOD.get_neighbour_entities(entity, direction)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    local Position = {
-        position = This_MOD.add_vectors(
-            entity.position,
-            dir2vector[direction]
-        )
-    }
+    --- Obtener la entidades en la posición
+    local Entities = entity.surface.find_entities_filtered({
+        entity.position.x + dir2vector[direction].x,
+        entity.position.y + dir2vector[direction].y
+    })
 
-    local Entities = entity.surface.find_entities_filtered(Position)
-
+    --- Filtar las entidades validas
     local Output = {}
     for _, Entity in pairs(Entities) do
         local Flag = This_MOD.entities[Entity.type]
@@ -127,6 +117,7 @@ function This_MOD.get_neighbour_entities(entity, direction)
         if Flag then table.insert(Output, Entity) end
     end
 
+    --- Devuelve el resultado, de haberlo
     if #Output > 0 then return Output end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -144,12 +135,10 @@ function This_MOD.has_inventory(entities)
         end
     end
 
-    return false
-
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
---- Detección de la cara del cinturón
+--- Hay una entidad con la dirección dada
 function This_MOD.is_direction(entities, direction)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -159,15 +148,13 @@ function This_MOD.is_direction(entities, direction)
         if Flag then return true end
     end
 
-    return false
-
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 ---------------------------------------------------------------------------------------------------
 
---- Receptor de los eventos a ejecutar
-function This_MOD.on_builtEntity(Data)
+--- Al construir un cargador
+function This_MOD.on_built_entity(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Renombrar la entidad a construir
