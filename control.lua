@@ -106,8 +106,6 @@ function This_MOD.get_neighbour_entities(entity, direction)
 end
 
 --- La entidad tiene un inventario
---- @param entities table # Entidad a evaluar
---- @return boolean
 function This_MOD.has_inventory(entities)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -127,9 +125,6 @@ function This_MOD.has_inventory(entities)
 end
 
 --- Detección de la cara del cinturón
---- @param entities table # Entidad a evaluar
---- @param direction integer # Dirección esperada
---- @return boolean
 function This_MOD.is_direction(entities, direction)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -151,7 +146,6 @@ end
 ---------------------------------------------------------------------------------------------------
 
 --- Receptor de los eventos a ejecutar
---- @param event table
 function This_MOD.on_builtEntity(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
