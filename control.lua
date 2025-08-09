@@ -204,11 +204,17 @@ function This_MOD.on_built_entity(Data)
 
     --- Alinear con el inventario
     if Back and Back_inventory then
+        if Front and not Front_direction then
+            Entity.rotate()
+        end
         return
     end
 
     if Front and Front_inventory then
         Entity.direction = Opposite
+        if Back and Back_direction then
+            Entity.rotate()
+        end
         return
     end
 
