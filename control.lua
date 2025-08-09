@@ -219,30 +219,16 @@ function This_MOD.on_builtEntity(Data)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    if Back and not Front and Back_inventory then
+    if Back and Back_inventory then
         return
     end
 
-    if not Back and Front and Fron_inventory then
+    if Front and Fron_inventory then
         Entity.direction = Opposite
         return
     end
 
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-
-
-
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    if true then return end
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-
-
-
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     if Back and Back_direction then
         Entity.direction = Opposite
@@ -269,141 +255,6 @@ function This_MOD.on_builtEntity(Data)
         if not This_MOD.is_direction(Front, Entity.direction) then
             if not Input then Entity.rotate() end
         end
-        return
-    end
-
-
-
-    -- if Back and not Input and Back_inventory then
-    --     return
-    -- end
-
-    -- if Back and Input and Back_inventory then
-    --     Entity.rotate()
-    --     return
-    -- end
-
-    -- if Front and not Input and Fron_inventory then
-    --     Entity.direction = Opposite
-    --     return
-    -- end
-
-    -- if Front and Input and Fron_inventory then
-    --     Entity.direction = Opposite
-    --     Entity.rotate()
-    --     return
-    -- end
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-
-
-
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    if true then return end
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-
-
-
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    local dir2vector = {
-        [defines.direction.north] = { x = 0, y = -1 },
-        [defines.direction.east]  = { x = 1, y = 0 },
-        [defines.direction.south] = { x = 0, y = 1 },
-        [defines.direction.west]  = { x = -1, y = 0 },
-    }
-
-    local Datos = {
-        Entity = {
-            name = Entity.name,
-            direction = dir2vector[Entity.direction],
-            loader_type = Entity.loader_type,
-        },
-    }
-
-    Datos.back_boolean = Back and true or false
-    Datos.Front_boolean = Front and true or false
-
-    Datos.Front = {}
-    for _, front in pairs(Front or {}) do
-        table.insert(Datos.Front, {
-            name = front.name,
-            direction = dir2vector[front.direction],
-        })
-    end
-
-    Datos.Back = {}
-    for _, back in pairs(Back or {}) do
-        table.insert(Datos.Back, {
-            name = back.name,
-            direction = dir2vector[back.direction],
-        })
-    end
-
-    log("\n\n\n\n\n")
-    GPrefix.var_dump(Datos)
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    --- Representación grafica
-    ---    >   Cinta or Lado de la cita
-    ---    X   Entidad con inventario
-    --- [ < ] Cargador a construir
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-
-
-
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    if true then return end
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-
-
-
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    --- Inicio: >  [ < ]     Resultado: >  [ > ]
-    --- Inicio: >  [ < ]     Resultado: >  [ > ]
-    if This_MOD.is_direction(Direction, This_MOD.opposite[Entity.direction]) then
-        Entity.rotate()
-        return
-    end
-
-    --- Inicio:  >  [ => ]     Resultado:  >  [ >= ]
-    --- Inicio: =>  [ => ]     Resultado: =>  [ >= ]
-    if This_MOD.is_direction(Opposite, Entity.direction) then
-        Entity.direction = This_MOD.opposite[Entity.direction]
-        Entity.rotate()
-        return
-    end
-
-    --- Inicio:  <  [ => ]     Resultado:  <  [ <= ]
-    if This_MOD.is_direction(Opposite, This_MOD.opposite[Entity.direction]) then
-        Entity.direction = This_MOD.opposite[Entity.direction]
-        return
-    end
-
-    --- Inicio:  X  [ <= ]     Resultado:  X  [ =< ]
-    if This_MOD.has_inventory(Direction) then
-        if not This_MOD.is_direction(Opposite, Entity.direction) then
-            Entity.direction = This_MOD.opposite[Entity.direction]
-            Entity.rotate()
-        end
-        return
-    end
-
-    --- Inicio:  X  [ => ]     Resultado:  X  [ => ]
-    if This_MOD.has_inventory(Opposite) then
         return
     end
 
