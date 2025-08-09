@@ -198,13 +198,13 @@ function This_MOD.on_builtEntity(Data)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    if Back and Input and Back_direction then
+    if Back and Back_direction then
         Entity.direction = Opposite
         Entity.rotate()
         return
     end
 
-    if Back and Input and not Back_direction then
+    if Back and not Back_direction then
         Entity.direction = Opposite
         if not This_MOD.is_direction(Back, Entity.direction) then
             Entity.direction = Direction
@@ -214,11 +214,11 @@ function This_MOD.on_builtEntity(Data)
 
 
 
-    -- if not Input and Dir_front then
+    -- if Front and not Back_direction then
     --     return
     -- end
 
-    -- if not Input and not Dir_front then
+    -- if Front and not Back_direction then
     --     return
     -- end
 
