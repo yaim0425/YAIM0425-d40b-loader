@@ -41,6 +41,24 @@ function This_MOD.setting_mod()
         [defines.direction.west]  = defines.direction.east,
     }
 
+
+    ---- Entities validas
+    This_MOD.entities = {
+        ["splitter"] = true,
+        ["loader-1x1"] = true,
+        ["transport-belt"] = true,
+        ["underground-belt"] = true
+    }
+
+    --- Tipo de inventarios validos
+    This_MOD.inventory = {
+        [defines.inventory.chest] = true,
+        [defines.inventory.lab_input] = true,
+        [defines.inventory.furnace_source] = true,
+        [defines.inventory.rocket_silo_rocket] = true,
+        [defines.inventory.assembling_machine_input] = true
+    }
+
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
@@ -88,7 +106,7 @@ function This_MOD.get_neighbour_entities(entity, direction)
         [defines.direction.north] = { x = 0, y = -1 },
         [defines.direction.east]  = { x = 1, y = 0 },
         [defines.direction.south] = { x = 0, y = 1 },
-        [defines.direction.west]  = { x = -1, y = 0 },
+        [defines.direction.west]  = { x = -1, y = 0 }
     }
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -102,12 +120,14 @@ function This_MOD.get_neighbour_entities(entity, direction)
 
     local Entities = entity.surface.find_entities_filtered(Position)
 
-    local Output = 0
-    for _ in pairs(Entities) do
-        Output = Output + 1
+    local Output = {}
+    for _, Entity in pairs(Entities) do
+        local Flag = This_MOD.entities[Entity.type]
+        Flag = Flag or This_MOD.has_inventory({ Entity })
+        if Flag then table.insert(Output, Entity) end
     end
 
-    if Output > 0 then return Entities end
+    if #Output > 0 then return Output end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -117,13 +137,11 @@ function This_MOD.has_inventory(entities)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     for _, entity in pairs(entities or {}) do
-        local Flag = false
-        Flag = Flag or entity.get_inventory(defines.inventory.chest)
-        Flag = Flag or entity.get_inventory(defines.inventory.furnace_source)
-        Flag = Flag or entity.get_inventory(defines.inventory.assembling_machine_input)
-        Flag = Flag or entity.get_inventory(defines.inventory.lab_input)
-        Flag = Flag or entity.get_inventory(defines.inventory.rocket_silo_rocket)
-        if Flag then return true end
+        for id, _ in pairs(This_MOD.inventory) do
+            if entity.get_inventory(id) then
+                return true
+            end
+        end
     end
 
     return false
@@ -136,11 +154,7 @@ function This_MOD.is_direction(entities, direction)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     for _, entity in pairs(entities or {}) do
-        local Flag = false
-        Flag = Flag or entity.type == "splitter"
-        Flag = Flag or entity.type == "loader-1x1"
-        Flag = Flag or entity.type == "transport-belt"
-        Flag = Flag or entity.type == "underground-belt"
+        local Flag = This_MOD.entities[entity.type]
         Flag = Flag and entity.direction == direction
         if Flag then return true end
     end
@@ -202,6 +216,31 @@ function This_MOD.on_builtEntity(Data)
     local Back_inventory = This_MOD.has_inventory(Back)
     local Front_direction = This_MOD.is_direction(Front, Entity.direction)
     local Back_direction = This_MOD.is_direction(Back, Entity.direction)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    if Back and not Front and Back_inventory then
+        return
+    end
+
+    if not Back and Front and Fron_inventory then
+        Entity.direction = Opposite
+        return
+    end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    if true then return end
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
