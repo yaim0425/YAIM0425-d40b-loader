@@ -33,15 +33,6 @@ end
 function This_MOD.setting_mod()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Direcciones con las que funciona
-    This_MOD.opposite = {
-        [defines.direction.north] = defines.direction.south,
-        [defines.direction.south] = defines.direction.north,
-        [defines.direction.east]  = defines.direction.west,
-        [defines.direction.west]  = defines.direction.east,
-    }
-
-
     ---- Entities validas
     This_MOD.entities = {
         ["splitter"] = true,
@@ -173,10 +164,24 @@ function This_MOD.on_built_entity(Data)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Variables a usar
+    --- Direcciones con las que funciona
+    local opposite = {
+        [defines.direction.north] = defines.direction.south,
+        [defines.direction.south] = defines.direction.north,
+        [defines.direction.east]  = defines.direction.west,
+        [defines.direction.west]  = defines.direction.east,
+    }
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- El cargadro esta xXx en el inventaio
     local Input = Entity.loader_type == "input"
+
+    --- Direciones a validar
     local Direction = Entity.direction
-    local Opposite = This_MOD.opposite[Entity.direction]
+    local Opposite = opposite[Entity.direction]
+
+    --- Entidades delante y atras
     local Front = This_MOD.get_neighbour_entities(Entity,
         Input and Opposite or Direction --- Belt
     )
@@ -184,21 +189,20 @@ function This_MOD.on_built_entity(Data)
         Input and Direction or Opposite --- O/I
     )
 
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    --- Nada a evaluar
-    if not (Front or Back) then return end
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    --- Valores a usar
+    --- Hay algún inventario
     local Front_inventory = This_MOD.has_inventory(Front)
-    local Front_direction = This_MOD.is_direction(Front, Entity.direction)
     local Back_inventory = This_MOD.has_inventory(Back)
+
+    --- La entidad tiene la misma dirección
+    local Front_direction = This_MOD.is_direction(Front, Entity.direction)
     local Back_direction = This_MOD.is_direction(Back, Entity.direction)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
+    --- Nada con lo cual alinear
+    if not (Front or Back) then return end
+
+    --- Alinear con el inventario
     if Back and Back_inventory then
         return
     end
@@ -208,8 +212,7 @@ function This_MOD.on_built_entity(Data)
         return
     end
 
-
-
+    --- Alinear con lo que esté atras
     if Back and Back_direction then
         Entity.direction = Opposite
         Entity.rotate()
@@ -224,8 +227,7 @@ function This_MOD.on_built_entity(Data)
         return
     end
 
-
-
+    --- Alinear con lo que esté delante
     if Front and Front_direction then
         return
     end
