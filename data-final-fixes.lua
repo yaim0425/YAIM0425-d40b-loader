@@ -207,6 +207,7 @@ function This_MOD.create_recipe(space)
 
     --- Agregar a la tecnología
     local Tech = GPrefix.create_tech(This_MOD.prefix, space.tech, Recipe)
+    Tech.localised_description = { "entity-description." .. This_MOD.prefix .. "loader" }
     Tech.icons = {
         { icon = This_MOD.graphics.tech.base, icon_size = 128 },
         { icon = This_MOD.graphics.tech.mask, tint = space.color, icon_size = 128 },
