@@ -105,8 +105,10 @@ function This_MOD.get_neighbour_entities(entity, direction)
 
     --- Obtener la entidades en la posición
     local Entities = entity.surface.find_entities_filtered({
-        entity.position.x + dir2vector[direction].x,
-        entity.position.y + dir2vector[direction].y
+        position = {
+            x = entity.position.x + dir2vector[direction].x,
+            y = entity.position.y + dir2vector[direction].y
+        }
     })
 
     --- Filtar las entidades validas
