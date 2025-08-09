@@ -100,7 +100,14 @@ function This_MOD.get_neighbour_entities(entity, direction)
         )
     }
 
-    return entity.surface.find_entities_filtered(Position)
+    local Entities = entity.surface.find_entities_filtered(Position)
+
+    local Output = 0
+    for _ in pairs(Entities) do
+        Output = Output + 1
+    end
+
+    if Output > 0 then return Entities end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -109,7 +116,7 @@ end
 function This_MOD.has_inventory(entities)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    for _, entity in pairs(entities) do
+    for _, entity in pairs(entities or {}) do
         local Flag = false
         Flag = Flag or entity.get_inventory(defines.inventory.chest)
         Flag = Flag or entity.get_inventory(defines.inventory.furnace_source)
@@ -128,7 +135,7 @@ end
 function This_MOD.is_direction(entities, direction)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    for _, entity in pairs(entities) do
+    for _, entity in pairs(entities or {}) do
         local Flag = false
         Flag = Flag or entity.type == "splitter"
         Flag = Flag or entity.type == "loader-1x1"
@@ -207,7 +214,7 @@ function This_MOD.on_builtEntity(Data)
     if Back and not Back_direction then
         Entity.direction = Opposite
         if not This_MOD.is_direction(Back, Entity.direction) then
-            Entity.direction = Direction
+            if Input then Entity.rotate() end
         end
         return
     end
@@ -220,30 +227,33 @@ function This_MOD.on_builtEntity(Data)
 
     if Front and not Front_direction then
         Entity.rotate()
+        if not This_MOD.is_direction(Front, Entity.direction) then
+            if not Input then Entity.rotate() end
+        end
         return
     end
 
 
 
-    if Back and not Input and Back_inventory then
-        return
-    end
+    -- if Back and not Input and Back_inventory then
+    --     return
+    -- end
 
-    if Back and Input and Back_inventory then
-        Entity.rotate()
-        return
-    end
+    -- if Back and Input and Back_inventory then
+    --     Entity.rotate()
+    --     return
+    -- end
 
-    if Front and not Input and Fron_inventory then
-        Entity.direction = Opposite
-        return
-    end
+    -- if Front and not Input and Fron_inventory then
+    --     Entity.direction = Opposite
+    --     return
+    -- end
 
-    if Front and Input and Fron_inventory then
-        Entity.direction = Opposite
-        Entity.rotate()
-        return
-    end
+    -- if Front and Input and Fron_inventory then
+    --     Entity.direction = Opposite
+    --     Entity.rotate()
+    --     return
+    -- end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -276,19 +286,22 @@ function This_MOD.on_builtEntity(Data)
         },
     }
 
+    Datos.back_boolean = Back and true or false
+    Datos.Front_boolean = Front and true or false
+
     Datos.Front = {}
-    for _, belt in pairs(Front) do
+    for _, front in pairs(Front or {}) do
         table.insert(Datos.Front, {
-            name = belt.name,
-            direction = dir2vector[belt.direction],
+            name = front.name,
+            direction = dir2vector[front.direction],
         })
     end
 
     Datos.Back = {}
-    for _, loading in pairs(Back) do
+    for _, back in pairs(Back or {}) do
         table.insert(Datos.Back, {
-            name = loading.name,
-            direction = dir2vector[loading.direction],
+            name = back.name,
+            direction = dir2vector[back.direction],
         })
     end
 
