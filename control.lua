@@ -41,9 +41,6 @@ function This_MOD.setting_mod()
         [defines.direction.west]  = defines.direction.east,
     }
 
-    --- Filtrar los cargadores
-    This_MOD.filter = { { filter = "type", type = "loader-1x1" } }
-
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
@@ -60,7 +57,7 @@ function This_MOD.load_events()
         defines.events.on_space_platform_built_entity,
     }, function(events)
         This_MOD.on_builtEntity(GPrefix.create_data(events, This_MOD))
-    end, This_MOD.filter)
+    end)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -89,15 +86,21 @@ function This_MOD.get_neighbour_entities(entity, direction)
 
     local dir2vector = {
         [defines.direction.north] = { x = 0, y = -1 },
-        [defines.direction.south] = { x = 0, y = 1 },
         [defines.direction.east]  = { x = 1, y = 0 },
+        [defines.direction.south] = { x = 0, y = 1 },
         [defines.direction.west]  = { x = -1, y = 0 },
     }
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    local Table = { position = This_MOD.add_vectors(entity.position, dir2vector[direction]) }
-    return entity.surface.find_entities_filtered(Table)
+    local Position = {
+        position = This_MOD.add_vectors(
+            entity.position,
+            dir2vector[direction]
+        )
+    }
+
+    return entity.surface.find_entities_filtered(Position)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -125,7 +128,7 @@ end
 
 --- Detección de la cara del cinturón
 --- @param entities table # Entidad a evaluar
---- @param direction table # Dirección esperada
+--- @param direction integer # Dirección esperada
 --- @return boolean
 function This_MOD.is_direction(entities, direction)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -145,6 +148,8 @@ function This_MOD.is_direction(entities, direction)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
+---------------------------------------------------------------------------------------------------
+
 --- Receptor de los eventos a ejecutar
 --- @param event table
 function This_MOD.on_builtEntity(Data)
@@ -153,55 +158,176 @@ function This_MOD.on_builtEntity(Data)
     --- Renombrar la entidad a construir
     local Entity = Data.Event.entity
 
-    --- ¿Construcción inválida? no te molestes con la falsa propiedad "revived" de los
-    --- Nanobots/Bluebuild anteriores a la versión 1.0, ahora esas travesuras sólo pueden pasar en eventos script_raised_*.
-    --- Tampoco es necesario comprobar el tipo de entidad ya que podemos filtrarlo en el manejador de eventos
+    --- Validar
     if not Entity then return end
     if not Entity.valid then return end
-    if Entity.name == "gosht" then return end
-
-    GPrefix.var_dump(Entity.name)
-
-    --- Obtener las entidades de ambos extremos
-    local Belt = This_MOD.get_neighbour_entities(Entity, Entity.direction)                       -- Front [ > ]
-    local Loading = This_MOD.get_neighbour_entities(Entity, This_MOD.opposite[Entity.direction]) -- Back  [ = ]
+    if not GPrefix.has_id(Entity.name, This_MOD.id) then return end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Variables a usar
+    local Front
+    local Back
+
+    --- Direcciones a evaluar
+    local Direction = Entity.direction
+    local Opposite = This_MOD.opposite[Entity.direction]
+
+    --- Entidades al frente y atras
+    if Entity.loader_type == "output" then
+        Front = This_MOD.get_neighbour_entities(Entity, Direction)
+        Back = This_MOD.get_neighbour_entities(Entity, Opposite)
+    end
+
+    if Entity.loader_type == "input" then
+        Front = This_MOD.get_neighbour_entities(Entity, Opposite)
+        Back = This_MOD.get_neighbour_entities(Entity, Direction)
+    end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Nada a evaluar
+    if not (Front or Back) then return end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Valores a usar
+    local Input = Entity.loader_type == "input"
+    local Fron_inventory = This_MOD.has_inventory(Front)
+    local Back_inventory = This_MOD.has_inventory(Back)
+    local Front_direction = This_MOD.is_direction(Front, Entity.direction)
+    local Back_direction = This_MOD.is_direction(Back, Entity.direction)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    if Back and Input and Back_direction then
+        Entity.direction = Opposite
+        Entity.rotate()
+        return
+    end
+
+    if Back and Input and not Back_direction then
+        Entity.direction = Opposite
+        if not This_MOD.is_direction(Back, Entity.direction) then
+            Entity.direction = Direction
+        end
+        return
+    end
+
+
+
+    -- if not Input and Dir_front then
+    --     return
+    -- end
+
+    -- if not Input and not Dir_front then
+    --     return
+    -- end
+
+
+
+    if Back and not Input and Back_inventory then
+        return
+    end
+
+    if Back and Input and Back_inventory then
+        Entity.rotate()
+        return
+    end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    local dir2vector = {
+        [defines.direction.north] = { x = 0, y = -1 },
+        [defines.direction.east]  = { x = 1, y = 0 },
+        [defines.direction.south] = { x = 0, y = 1 },
+        [defines.direction.west]  = { x = -1, y = 0 },
+    }
+
+    local Datos = {
+        Entity = {
+            name = Entity.name,
+            direction = dir2vector[Entity.direction],
+            loader_type = Entity.loader_type,
+        },
+    }
+
+    Datos.Front = {}
+    for _, belt in pairs(Front) do
+        table.insert(Datos.Front, {
+            name = belt.name,
+            direction = dir2vector[belt.direction],
+        })
+    end
+
+    Datos.Back = {}
+    for _, loading in pairs(Back) do
+        table.insert(Datos.Back, {
+            name = loading.name,
+            direction = dir2vector[loading.direction],
+        })
+    end
+
+    log("\n\n\n\n\n")
+    GPrefix.var_dump(Datos)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     --- Representación grafica
-    ---    =   Lado del cargador
     ---    >   Cinta or Lado de la cita
     ---    X   Entidad con inventario
-    --- [ <= ] Cargador a construir
+    --- [ < ] Cargador a construir
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    if true then return end
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Inicio:  >  [ <= ]     Resultado:  >  [ >= ]
-    --- Inicio: =>  [ <= ]     Resultado: =>  [ >= ]
-    if This_MOD.is_direction(Belt, This_MOD.opposite[Entity.direction]) then
+    --- Inicio: >  [ < ]     Resultado: >  [ > ]
+    --- Inicio: >  [ < ]     Resultado: >  [ > ]
+    if This_MOD.is_direction(Direction, This_MOD.opposite[Entity.direction]) then
         Entity.rotate()
         return
     end
 
     --- Inicio:  >  [ => ]     Resultado:  >  [ >= ]
     --- Inicio: =>  [ => ]     Resultado: =>  [ >= ]
-    if This_MOD.is_direction(Loading, Entity.direction) then
+    if This_MOD.is_direction(Opposite, Entity.direction) then
         Entity.direction = This_MOD.opposite[Entity.direction]
         Entity.rotate()
         return
     end
 
     --- Inicio:  <  [ => ]     Resultado:  <  [ <= ]
-    if This_MOD.is_direction(Loading, This_MOD.opposite[Entity.direction]) then
+    if This_MOD.is_direction(Opposite, This_MOD.opposite[Entity.direction]) then
         Entity.direction = This_MOD.opposite[Entity.direction]
         return
     end
 
     --- Inicio:  X  [ <= ]     Resultado:  X  [ =< ]
-    if This_MOD.has_inventory(Belt) then
-        if not This_MOD.is_direction(Loading, Entity.direction) then
+    if This_MOD.has_inventory(Direction) then
+        if not This_MOD.is_direction(Opposite, Entity.direction) then
             Entity.direction = This_MOD.opposite[Entity.direction]
             Entity.rotate()
         end
@@ -209,7 +335,7 @@ function This_MOD.on_builtEntity(Data)
     end
 
     --- Inicio:  X  [ => ]     Resultado:  X  [ => ]
-    if This_MOD.has_inventory(Loading) then
+    if This_MOD.has_inventory(Opposite) then
         return
     end
 
