@@ -164,8 +164,8 @@ function This_MOD.on_builtEntity(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Variables a usar
-    local Front
-    local Back
+    local Front --- Belt
+    local Back  --- O/I
 
     --- Direcciones a evaluar
     local Direction = Entity.direction
@@ -214,13 +214,14 @@ function This_MOD.on_builtEntity(Data)
 
 
 
-    -- if Front and not Back_direction then
-    --     return
-    -- end
+    if Front and Back_direction then
+        return
+    end
 
-    -- if Front and not Back_direction then
-    --     return
-    -- end
+    if Front and not Back_direction then
+        Entity.rotate()
+        return
+    end
 
 
 
