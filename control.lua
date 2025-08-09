@@ -234,6 +234,17 @@ function This_MOD.on_builtEntity(Data)
         return
     end
 
+    if Front and not Input and Fron_inventory then
+        Entity.direction = Opposite
+        return
+    end
+
+    if Front and Input and Fron_inventory then
+        Entity.direction = Opposite
+        Entity.rotate()
+        return
+    end
+
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
 
