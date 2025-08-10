@@ -174,19 +174,15 @@ function This_MOD.on_built_entity(Data)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- El cargadro esta xXx en el inventaio
+    --- El cargadro esta metiendo en el inventaio
     local Input = Entity.loader_type == "input"
-
-    --- Direciones a validar
-    local Direction = Entity.direction
-    local Opposite = opposite[Entity.direction]
 
     --- Entidades delante y atras
     local Front = This_MOD.get_neighbour_entities(Entity,
-        Input and Opposite or Direction --- Belt
+        Input and opposite[Entity.direction] or Entity.direction --- Belt
     )
     local Back = This_MOD.get_neighbour_entities(Entity,
-        Input and Direction or Opposite --- O/I
+        Input and Entity.direction or opposite[Entity.direction] --- O/I
     )
 
     --- Hay algún inventario
@@ -211,7 +207,7 @@ function This_MOD.on_built_entity(Data)
     end
 
     if Front and Front_inventory then
-        Entity.direction = Opposite
+        Entity.direction = opposite[Entity.direction]
         if Back and Back_direction then
             Entity.rotate()
         end
@@ -220,13 +216,13 @@ function This_MOD.on_built_entity(Data)
 
     --- Alinear con lo que esté atras
     if Back and Back_direction then
-        Entity.direction = Opposite
+        Entity.direction = opposite[Entity.direction]
         Entity.rotate()
         return
     end
 
     if Back and not Back_direction then
-        Entity.direction = Opposite
+        Entity.direction = opposite[Entity.direction]
         if not This_MOD.is_direction(Back, Entity.direction) then
             if Input then Entity.rotate() end
         end
